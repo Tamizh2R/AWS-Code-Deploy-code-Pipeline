@@ -1,0 +1,98 @@
+
+**Step 1: Setting up AWS CodeCommit:**
+1. Create an AWS CodeCommit Repository:
+   - Go to the AWS Management Console and navigate to the CodeCommit service.
+   - Click on "Create repository" and provide a name for your repository (e.g., "MyApp").
+   - Choose the repository settings, such as repository description, and click "Create repository."
+
+2. Clone the Repository Locally and Add Application Code:
+   - Clone the CodeCommit repository to your local machine using the HTTPS or SSH URL provided in the repository's settings.
+   - Add your application code and any required files to the local repository.
+   - Commit the changes locally.
+
+3. Push Changes to the CodeCommit Repository:
+   - Push the committed changes from your local repository to the CodeCommit repository using the "git push" command.
+
+**Step 2: Installing AWS CLI and CodeDeploy Agent on EC2:**
+1. Launch an EC2 Instance and Create IAM Role:
+   - Go to the AWS Management Console and navigate to the EC2 service.
+   - Launch an Amazon EC2 instance, selecting the Amazon Linux AMI or another supported operating system.
+   - Create a new IAM role or use an existing one with permissions to access CodeDeploy.
+
+2. Connect to the EC2 Instance using SSH:
+   - Use SSH to connect to the EC2 instance using the private key (.pem) associated with the key pair used during instance creation.
+
+3. Install AWS CLI and CodeDeploy Agent on the EC2 Instance:
+   - Run the following commands on the EC2 instance to install the AWS CLI and CodeDeploy agent using user data:
+     ```bash
+     sudo yum update -y
+     sudo yum install -y ruby
+     sudo yum install -y aws-cli
+     cd /home/ec2-user
+     aws configure # Enter your AWS access key, secret key, region, and output format
+     aws s3 cp s3://aws-codedeploy-{region}/latest/install . --region {region}
+     chmod +x ./install
+     sudo ./install auto
+     ```
+   - Replace "{region}" with the AWS region you are using.
+
+**Step 3: Setting up AWS CodeDeploy:**
+1. Create an IAM Role for CodeDeploy:
+   - Go to the AWS Management Console and navigate to the IAM service.
+   - Create a new IAM role named "CodeDeployServiceRole" with the required permissions for CodeDeploy. Attach the "AWSCodeDeployRole" policy.
+
+2. Create an Application in CodeDeploy:
+   - Go to the AWS Management Console and navigate to the CodeDeploy service.
+   - Click on "Create application" and provide a name for your application (e.g., "MyApp").
+   - Choose the compute platform (e.g., EC2/On-Premises).
+
+3. Set Up a Deployment Group for the EC2 Instance:
+   - In the CodeDeploy console, click on "Create deployment group."
+   - Choose the application you created earlier (e.g., "MyApp").
+   - Specify the deployment group name (e.g., "MyDeploymentGroup").
+   - Choose the deployment type as "In-place."
+   - Under "Environment configuration," select "Amazon EC2 Instances" and provide tags or choose instances based on other criteria.
+   - Configure deployment settings such as load balancer (if applicable) and alarms.
+   - Click "Create deployment group" to complete the setup.
+
+**Step 4: Configuring AWS CodePipeline:**
+1. Open the AWS CodePipeline Console:
+   - Go to the AWS Management Console and navigate to the CodePipeline service.
+
+2. Create a New Pipeline:
+   - Click on "Create pipeline" and provide a name for your pipeline (e.g., "MyAppPipeline").
+
+3. Configure the Source Stage:
+   - Choose "AWS CodeCommit" as the source provider.
+   - Select the repository and branch you want to trigger the pipeline on.
+   - Configure any other settings, such as repository polling or webhook triggers.
+
+4. Configure the Build Stage (Optional):
+   - If you need to build your application code, choose "AWS CodeBuild" as the build provider.
+   - Select the build project or create a new one if required.
+   - Configure build settings based on your application's build process.
+
+5. Configure the Deployment Stage:
+   - Choose "AWS CodeDeploy" as the deployment provider.
+   - Select the application and deployment group you created earlier.
+   - Specify the deployment settings, such as deployment settings, file type, and revision location.
+
+**Step 5: Triggering the Pipeline:**
+1. Make Changes to Your Application Code:
+   - Make code changes in your local repository and commit them.
+   - Push the changes to the specified branch in the CodeCommit repository.
+
+2. Observe the Pipeline Execution:
+   - Go to the AWS CodePipeline console and monitor the pipeline's execution.
+   - The pipeline will automatically detect the changes in the CodeCommit repository and trigger the build and deployment stages.
+
+**Step 6: Monitor Deployment with AWS CloudWatch:**
+1. Use AWS CloudWatch to Monitor the Pipeline:
+   - Go to the AWS Management Console and navigate to the CloudWatch service.
+   - Use CloudWatch to monitor the pipeline's execution, view logs, and set up alarms for critical events.
+
+2. Set Up CloudWatch Alarms for Notifications:
+   - Create CloudWatch alarms to monitor the health of the EC2 instances and trigger notifications for critical events.
+
+**Conclusion:**
+By following this comprehensive step-by-step process, you have successfully automated code deployment on AWS using CodePipeline, CodeCommit, CodeDeploy, and CloudWatch. Your application code changes will now
