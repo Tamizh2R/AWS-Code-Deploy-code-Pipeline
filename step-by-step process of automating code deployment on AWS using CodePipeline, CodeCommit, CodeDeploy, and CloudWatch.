@@ -1,7 +1,7 @@
 
 **Step 1: Setting up AWS CodeCommit:**
 1. Create an AWS CodeCommit Repository:
-   - Go to the AWS Management Console and navigate to the CodeCommit service.
+   - Go to the AWS Management Console and navigate to the CodeCommit service
    - Click on "Create repository" and provide a name for your repository (e.g., "MyApp").
    - Choose the repository settings, such as repository description, and click "Create repository."
 
